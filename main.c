@@ -1,14 +1,14 @@
 #include <stdio.h>
 
 #include "utf8.h"
-#include "set.h"
+#include "map.h"
 #include "list.h"
 
 int main(int argc, char **argv)
 {
     linked_list_item_t *last = NULL;
 
-    set_t set = create_set(100);
+    map_t set = create_map(100);
 
     for (int i = 0; i < 100; i++)
     {
@@ -24,24 +24,24 @@ int main(int argc, char **argv)
         int *value = malloc(sizeof(int));
         *value = 2 * i - 1;
 
-        insert_to_set(&set, key, sizeof(int), value);
+        insert_to_map(&set, key, sizeof(int), value);
     }
 
     int foo = 1337;
-    INSERT_TO_SET_BY_STRING_KEY(&set, "IYAD", &foo);
+    INSERT_TO_MAP_BY_STRING_LITERAL_KEY(&set, "IYAD", &foo);
 
     while (last != NULL)
     {
         int key = *((int *)(last->data));
 
-        int *value = get_from_set(&set, &key, sizeof(int));
+        int *value = get_from_map(&set, &key, sizeof(int));
 
         printf("%d %d\n", key, *value);
 
         last = last->prev;
     }
 
-    int *value = GET_FROM_SET_BY_STRING_KEY(&set, "IYAD");
+    int *value = GET_FROM_MAP_BY_STRING_LITERAL_KEY(&set, "IYAD");
     printf("%d\n", *value);
 
     return 0;
