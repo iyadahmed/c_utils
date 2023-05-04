@@ -100,6 +100,7 @@ int main(int argc, char **argv)
         bail("Failed to open file");
     }
 
+    // Read entire source code into memory
     buffer_t buffer = create_buffer();
     size_t total_read_bytes = 0;
     while (true)
@@ -114,11 +115,34 @@ int main(int argc, char **argv)
     }
     truncate_and_shrink_buffer(&buffer, total_read_bytes);
     push_back_to_buffer(&buffer, '\0');
-    puts(buffer.mem);
+
+    printf("Parsing source:\n%s\n", buffer.mem);
+
+    // Iterate source code one UTF-8 code point at a time
+    char *current_token_start = buffer.mem;
+    char *current_token_end = current_token_start;
+    while (true)
+    {
+        decode_code_point(&current_token_end);
+
+        if (memcmp(current_token_start, "import", current_token_end - current_token_start) == 0)
+        {
+            puts("Found import token");
+            current_token_start = current_token_end;
+        }
+
+        // for (char *iter = current_token_start; iter < current_token_end; iter++)
+        // {
+        //     putchar(*iter);
+        // }
+        // putchar('\n');
+
+        if (current_token_end == buffer.mem + total_read_bytes)
+        {
+            break;
+        }
+    }
 
     free_buffer(&buffer);
-
-    printf("\xF0\x9F\x98\x80\n"); // UTF-8 encoding of 😀 emoji
-    printf("🥺\n");
     return 0;
 }
