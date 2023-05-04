@@ -85,7 +85,6 @@ int main(int argc, char **argv)
 {
 
 #ifdef _MSC_VER
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleOutputCP(CP_UTF8);
 #endif
 
