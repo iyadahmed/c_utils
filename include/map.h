@@ -39,34 +39,14 @@ map_t create_map(size_t num_buckets)
     return (map_t) { buckets, num_buckets };
 }
 
-void insert_to_map(map_t* map, void* key, size_t key_length, void* value)
-{
-    uint64_t key_hash;
-    siphash(key, key_length, SIPHASH_KEY, (uint8_t*)(&key_hash), sizeof(uint64_t));
-    size_t bucket_index = key_hash % (map->num_buckets);
-
-    map_bucket_item_t* new_bucket_item = malloc(sizeof(map_bucket_item_t));
-    new_bucket_item->key = key;
-    new_bucket_item->key_hash = key_hash;
-    new_bucket_item->key_length = key_length;
-    new_bucket_item->value = value;
-
-    append_to_linked_list(map->buckets + bucket_index, new_bucket_item);
-}
-
-void insert_to_map_by_string_key(map_t* map, const char* string, void* value)
-{
-    insert_to_map(map, string, strlen(string), value);
-}
-
-bool match_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t key_length)
+bool compare_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t key_length)
 {
     // Compare pointers (fast), identity implies equality
     if (item->key == key) {
         return true;
     }
 
-    // Compare hashes (fast), if hashes are different there are no way the objects can be the same
+    // Compare hashes (fast), if hashes are different there is no way the objects can be the same
     if (item->key_hash != key_hash) {
         return false;
     }
@@ -78,29 +58,67 @@ bool match_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t key
     return memcmp(item->key, key, item->key_length) == 0;
 }
 
-void* get_from_map(map_t* map, void* key, size_t key_length)
+void find_bucket_item(map_t* map, void* key, size_t key_length, linked_list_t** list_out, map_bucket_item_t** bucket_item_out, uint64_t* key_hash_out)
 {
-    uint64_t key_hash;
-    siphash(key, key_length, SIPHASH_KEY, (uint8_t*)(&key_hash), sizeof(uint64_t));
-    size_t bucket_index = key_hash % (map->num_buckets);
+    siphash(key, key_length, SIPHASH_KEY, (uint8_t*)(key_hash_out), sizeof(uint64_t));
+    size_t bucket_index = (*key_hash_out) % (map->num_buckets);
 
-    linked_list_item_t* last = map->buckets[bucket_index].last;
+    (*list_out) = map->buckets + bucket_index;
+    linked_list_item_t* last = (*list_out)->last;
 
     while (last != NULL) {
-
         map_bucket_item_t* bucket_item = last->data;
-        if (match_key(bucket_item, key, key_hash, key_length)) {
-            return bucket_item->value;
+        if (compare_key(bucket_item, key, *key_hash_out, key_length)) {
+            *bucket_item_out = bucket_item;
+            return; // Imprtant to return!!!!
         }
-
         last = last->prev;
     }
-    return NULL;
+    *bucket_item_out = NULL;
 }
 
-void* get_from_map_by_string_key(map_t* map, const char* string)
+void set_value_for_key(map_t* map, void* key, size_t key_length, void* value)
 {
-    return get_from_map(map, string, strlen(string));
+    linked_list_t* list;
+    map_bucket_item_t* bucket_item;
+    uint64_t key_hash;
+
+    find_bucket_item(map, key, key_length, &list, &bucket_item, &key_hash);
+
+    if (bucket_item == NULL) {
+        map_bucket_item_t* new_bucket_item = malloc(sizeof(map_bucket_item_t));
+        new_bucket_item->key = key;
+        new_bucket_item->key_hash = key_hash;
+        new_bucket_item->key_length = key_length;
+        new_bucket_item->value = value;
+        append_to_linked_list(list, new_bucket_item);
+    } else {
+        bucket_item->value = value;
+    }
+}
+
+void set_value_for_string_key(map_t* map, const char* string, void* value)
+{
+    set_value_for_key(map, string, strlen(string), value);
+}
+
+void* get_value_for_key(map_t* map, void* key, size_t key_length)
+{
+    linked_list_t* list;
+    map_bucket_item_t* bucket_item;
+    uint64_t key_hash;
+
+    find_bucket_item(map, key, key_length, &list, &bucket_item, &key_hash);
+
+    if (bucket_item == NULL) {
+        return NULL;
+    }
+    return bucket_item->value;
+}
+
+void* get_value_for_string_key(map_t* map, const char* string)
+{
+    return get_value_for_key(map, string, strlen(string));
 }
 
 void free_map(map_t* map)
