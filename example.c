@@ -38,12 +38,9 @@ int main(int argc, char** argv)
 
 	while (last != NULL)
 	{
-		int key = *((int*)(last->data));
-
-		int* value = get_from_map(&set, &key, sizeof(int));
-
-		printf("%d %d\n", key, *value);
-
+		int* key = last->data;
+		int* value = get_from_map(&set, key, sizeof(int));
+		printf("%d %d\n", *key, *value);
 		last = last->prev;
 	}
 
