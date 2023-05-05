@@ -17,6 +17,9 @@ add_library(c_utils INTERFACE
 target_include_directories(c_utils INTERFACE include)
 set_target_properties(c_utils PROPERTIES
     LANGUAGE C
+    CMAKE_C_STANDARD 99
+    CMAKE_C_STANDARD_REQUIRED YES
+    CMAKE_C_EXTENSIONS NO
 )
 
 add_executable(example example.c)
