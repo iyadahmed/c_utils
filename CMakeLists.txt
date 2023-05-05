@@ -15,6 +15,9 @@ add_library(c_utils INTERFACE
     include/utf8.h
 )
 target_include_directories(c_utils INTERFACE include)
+set_target_properties(c_utils PROPERTIES
+    LANGUAGE C
+)
 
 add_executable(example example.c)
 target_link_libraries(example c_utils)
