@@ -62,21 +62,23 @@ void insert_to_map(map_t* set, void* key, size_t key_length, void* value)
 
 bool match_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t key_length)
 {
+	// Compare pointers (fast), identity implies equality
 	if (item->key == key)
 	{
 		return true;
 	}
 
+	// Compare hashes (fast), if hashes are different there are no way the objects can be the same
 	if (item->key_hash != key_hash)
 	{
 		return false;
 	}
 
+	// Finally compare length (fast) and actual bytes (slow)
 	if (item->key_length != key_length)
 	{
 		return false;
 	}
-
 	return memcmp(item->key, key, item->key_length) == 0;
 }
 
