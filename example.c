@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     {
         int* value = malloc(sizeof(int));
         *value = 1337;
-        INSERT_TO_MAP_BY_STRING_LITERAL_KEY(&map, "IYAD", value);
+        insert_to_map_by_string_key(&map, "IYAD", value);
     }
 
     linked_list_item_t* last = list.last;
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
         last = last->prev;
     }
 
-    int* value = GET_FROM_MAP_BY_STRING_LITERAL_KEY(&map, "IYAD");
+    int* value = get_from_map_by_string_key(&map, "IYAD");
     printf("%d\n", *value);
 
     free_map(&map);

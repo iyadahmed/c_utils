@@ -56,8 +56,10 @@ void insert_to_map(map_t* map, void* key, size_t key_length, void* value)
     append_to_linked_list(map->buckets + bucket_index, new_list_item);
 }
 
-#define INSERT_TO_MAP_BY_STRING_LITERAL_KEY(set_ptr, string_literal, value_ptr) \
-    insert_to_map(set_ptr, string_literal, sizeof(string_literal), value_ptr);
+void insert_to_map_by_string_key(map_t* map, const char* string, void* value)
+{
+    insert_to_map(map, string, strlen(string), value);
+}
 
 bool match_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t key_length)
 {
@@ -98,8 +100,10 @@ void* get_from_map(map_t* map, void* key, size_t key_length)
     return NULL;
 }
 
-#define GET_FROM_MAP_BY_STRING_LITERAL_KEY(set_ptr, string_literal) \
-    get_from_map(set_ptr, string_literal, sizeof(string_literal));
+void* get_from_map_by_string_key(map_t* map, const char* string)
+{
+    return get_from_map(map, string, strlen(string));
+}
 
 void free_map(map_t* map)
 {
