@@ -88,7 +88,7 @@ void* get_from_map(map_t* map, void* key, size_t key_length)
 
     while (last != NULL) {
 
-        map_bucket_item_t* bucket_item = last->value;
+        map_bucket_item_t* bucket_item = last->data;
         if (match_key(bucket_item, key, key_hash, key_length)) {
             return bucket_item->value;
         }
@@ -106,14 +106,7 @@ void* get_from_map_by_string_key(map_t* map, const char* string)
 void free_map(map_t* map)
 {
     for (size_t i = 0; i < map->num_buckets; i++) {
-        linked_list_item_t* last = map->buckets[i].last;
-
-        while (last != NULL) {
-            linked_list_item_t* prev = last->prev;
-            free(last->value);
-            free(last);
-            last = prev;
-        }
+        free_list_and_its_data(map->buckets + i);
     }
     free(map->buckets);
 }

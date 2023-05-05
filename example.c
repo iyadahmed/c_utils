@@ -10,44 +10,40 @@
 #include "map.h"
 #include "utf8.h"
 
+static map_t* gmap;
+
+static void func(linked_list_item_t* item)
+{
+    int* key = item->data;
+    int value = get_from_map(gmap, key, sizeof(int));
+    printf("%d %d\n", *key, value);
+}
+
 int main(int argc, char** argv)
 {
     linked_list_t list = create_list();
     map_t map = create_map(100);
+    gmap = &map;
 
     for (int i = 0; i < 100; i++) {
-        int* data = malloc(sizeof(int));
-        *data = i;
-        append_to_linked_list(&list, data);
 
         int* key = malloc(sizeof(int));
         *key = i;
 
-        int* value = malloc(sizeof(int));
-        *value = 2 * i - 1;
+        append_to_linked_list(&list, key);
 
-        insert_to_map(&map, key, sizeof(int), value);
+        insert_to_map(&map, key, sizeof(int), (void*)(2 * i - 1));
     }
 
-    {
-        int* value = malloc(sizeof(int));
-        *value = 1337;
-        insert_to_map_by_string_key(&map, "IYAD", value);
-    }
+    insert_to_map_by_string_key(&map, "IYAD", (void*)1337);
 
-    linked_list_item_t* last = list.last;
-    while (last != NULL) {
-        int* key = last->value;
-        int* value = get_from_map(&map, key, sizeof(int));
-        printf("%d %d\n", *key, *value);
-        last = last->prev;
-    }
+    foreach_in_list(&list, func);
 
-    int* value = get_from_map_by_string_key(&map, "IYAD");
-    printf("%d\n", *value);
+    int value = get_from_map_by_string_key(&map, "IYAD");
+    printf("%d\n", value);
 
     free_map(&map);
-    free_list(&list);
+    free_list_and_its_data(&list);
 
 #ifdef _MSC_VER
     _CrtDumpMemoryLeaks();
