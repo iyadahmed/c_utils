@@ -13,7 +13,7 @@
 int main(int argc, char** argv)
 {
     linked_list_t list = create_list();
-    map_t set = create_map(100);
+    map_t map = create_map(100);
 
     for (int i = 0; i < 100; i++) {
         linked_list_item_t* new_item = malloc(sizeof(linked_list_item_t));
@@ -29,27 +29,27 @@ int main(int argc, char** argv)
         int* value = malloc(sizeof(int));
         *value = 2 * i - 1;
 
-        insert_to_map(&set, key, sizeof(int), value);
+        insert_to_map(&map, key, sizeof(int), value);
     }
 
     {
         int* value = malloc(sizeof(int));
         *value = 1337;
-        INSERT_TO_MAP_BY_STRING_LITERAL_KEY(&set, "IYAD", value);
+        INSERT_TO_MAP_BY_STRING_LITERAL_KEY(&map, "IYAD", value);
     }
 
     linked_list_item_t* last = list.last;
     while (last != NULL) {
         int* key = last->data;
-        int* value = get_from_map(&set, key, sizeof(int));
+        int* value = get_from_map(&map, key, sizeof(int));
         printf("%d %d\n", *key, *value);
         last = last->prev;
     }
 
-    int* value = GET_FROM_MAP_BY_STRING_LITERAL_KEY(&set, "IYAD");
+    int* value = GET_FROM_MAP_BY_STRING_LITERAL_KEY(&map, "IYAD");
     printf("%d\n", *value);
 
-    free_map(&set);
+    free_map(&map);
 
 #ifdef _MSC_VER
     _CrtDumpMemoryLeaks();
