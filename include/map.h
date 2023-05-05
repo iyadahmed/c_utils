@@ -51,9 +51,7 @@ void insert_to_map(map_t* map, void* key, size_t key_length, void* value)
     new_bucket_item->key_length = key_length;
     new_bucket_item->value = value;
 
-    linked_list_item_t* new_list_item = malloc(sizeof(linked_list_item_t));
-    new_list_item->data = new_bucket_item;
-    append_to_linked_list(map->buckets + bucket_index, new_list_item);
+    append_to_linked_list(map->buckets + bucket_index, new_bucket_item);
 }
 
 void insert_to_map_by_string_key(map_t* map, const char* string, void* value)
@@ -90,7 +88,7 @@ void* get_from_map(map_t* map, void* key, size_t key_length)
 
     while (last != NULL) {
 
-        map_bucket_item_t* bucket_item = last->data;
+        map_bucket_item_t* bucket_item = last->value;
         if (match_key(bucket_item, key, key_hash, key_length)) {
             return bucket_item->value;
         }
@@ -112,7 +110,7 @@ void free_map(map_t* map)
 
         while (last != NULL) {
             linked_list_item_t* prev = last->prev;
-            free(last->data);
+            free(last->value);
             free(last);
             last = prev;
         }

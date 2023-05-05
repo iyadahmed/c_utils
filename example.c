@@ -16,12 +16,9 @@ int main(int argc, char** argv)
     map_t map = create_map(100);
 
     for (int i = 0; i < 100; i++) {
-        linked_list_item_t* new_item = malloc(sizeof(linked_list_item_t));
         int* data = malloc(sizeof(int));
         *data = i;
-        new_item->data = data;
-
-        append_to_linked_list(&list, new_item);
+        append_to_linked_list(&list, data);
 
         int* key = malloc(sizeof(int));
         *key = i;
@@ -40,7 +37,7 @@ int main(int argc, char** argv)
 
     linked_list_item_t* last = list.last;
     while (last != NULL) {
-        int* key = last->data;
+        int* key = last->value;
         int* value = get_from_map(&map, key, sizeof(int));
         printf("%d %d\n", *key, *value);
         last = last->prev;
@@ -50,6 +47,7 @@ int main(int argc, char** argv)
     printf("%d\n", *value);
 
     free_map(&map);
+    free_list(&list);
 
 #ifdef _MSC_VER
     _CrtDumpMemoryLeaks();
