@@ -33,8 +33,11 @@ int main(int argc, char** argv)
 		insert_to_map(&set, key, sizeof(int), value);
 	}
 
-	int foo = 1337;
-	INSERT_TO_MAP_BY_STRING_LITERAL_KEY(&set, "IYAD", &foo);
+	{
+		int* value = malloc(sizeof(int));
+		*value = 1337;
+		INSERT_TO_MAP_BY_STRING_LITERAL_KEY(&set, "IYAD", value);
+	}
 
 	while (last != NULL)
 	{
