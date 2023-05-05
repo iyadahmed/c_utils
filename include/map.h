@@ -99,7 +99,7 @@ void set_value_for_key(map_t* map, void* key, size_t key_length, void* value)
 
 void set_value_for_string_key(map_t* map, const char* string, void* value)
 {
-    set_value_for_key(map, (char *)string, strlen(string), value);
+    set_value_for_key(map, (char*)string, strlen(string), value);
 }
 
 void* get_value_for_key(map_t* map, void* key, size_t key_length)
