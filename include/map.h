@@ -66,9 +66,10 @@ bool match_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t key
 	{
 		return true;
 	}
-	else if (item->key_hash == key_hash)
+
+	if (item->key_hash != key_hash)
 	{
-		return true;
+		return false;
 	}
 
 	if (item->key_length != key_length)
