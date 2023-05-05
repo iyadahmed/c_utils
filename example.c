@@ -12,7 +12,7 @@
 
 static map_t* gmap;
 
-static void func(linked_list_item_t* item)
+static void print_list_item_data(linked_list_item_t* item)
 {
     int* key = item->data;
     int value = get_from_map(gmap, key, sizeof(int));
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 
     insert_to_map_by_string_key(&map, "IYAD", (void*)1337);
 
-    foreach_in_list(&list, func);
+    foreach_in_list(&list, print_list_item_data);
 
     int value = get_from_map_by_string_key(&map, "IYAD");
     printf("%d\n", value);
