@@ -118,7 +118,33 @@ void* get_value_for_key(map_t* map, void* key, size_t key_length)
 
 void* get_value_for_string_key(map_t* map, const char* string)
 {
-    return get_value_for_key(map, (char *)string, strlen(string));
+    return get_value_for_key(map, (char*)string, strlen(string));
+}
+
+void* get_or_set_value_for_key(map_t* map, void* key, size_t key_length, void* value)
+{
+    linked_list_t* list;
+    map_bucket_item_t* bucket_item;
+    uint64_t key_hash;
+
+    find_bucket_item(map, key, key_length, &list, &bucket_item, &key_hash);
+
+    if (bucket_item == NULL) {
+        map_bucket_item_t* new_bucket_item = malloc(sizeof(map_bucket_item_t));
+        new_bucket_item->key = key;
+        new_bucket_item->key_hash = key_hash;
+        new_bucket_item->key_length = key_length;
+        new_bucket_item->value = value;
+        append_to_linked_list(list, new_bucket_item);
+        return value;
+    } else {
+        return bucket_item->value;
+    }
+}
+
+void* get_or_set_value_for_string_key(map_t* map, const char* string, void* value)
+{
+    return get_or_set_value_for_key(map, (char*)string, strlen(string), value);
 }
 
 void free_map(map_t* map)

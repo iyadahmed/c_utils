@@ -42,6 +42,9 @@ int main(int argc, char** argv)
     int value = get_value_for_string_key(&map, "IYAD");
     printf("%d\n", value);
 
+    printf("%d\n", (int)get_or_set_value_for_string_key(&map, "FOO", (void*)12345));
+    printf("%d\n", (int)get_or_set_value_for_string_key(&map, "FOO", (void*)99999));
+
     free_map(&map);
     free_list_and_its_data(&list);
 
