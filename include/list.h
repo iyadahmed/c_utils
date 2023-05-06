@@ -26,7 +26,7 @@ void append_to_linked_list(list_t* list, void* value)
     list->last = new_item;
 }
 
-list_item_t* foreach_in_list(list_t* list, void (*func)(list_item_t*))
+void foreach_in_list(list_t* list, void (*func)(list_item_t*))
 {
     list_item_t* iter = list->last;
     while (iter != NULL) {
