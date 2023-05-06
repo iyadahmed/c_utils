@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "clz.h"
 
 // Stops at any null characters.
@@ -21,6 +23,7 @@ int decode_code_point(char** s)
 // Ensures that nothing will be written at or beyond end.
 void encode_code_point(char** s, char* end, int code)
 {
+    assert(code >= 0 && code <= 0x10FFFF);
     char val[4];
     int lead_byte_max = 0x7F;
     int val_index = 0;
@@ -39,6 +42,7 @@ void encode_code_point(char** s, char* end, int code)
 // Returns 0 if no split was needed.
 int split_into_surrogates(int code, int* surr1, int* surr2)
 {
+    assert(code >= 0 && code <= 0x10FFFF);
     if (code <= 0xFFFF)
         return 0;
     *surr2 = 0xDC00 | (code & 0x3FF); // Save the low 10 bits.
