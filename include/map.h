@@ -23,7 +23,7 @@ STRUCT(map_bucket_item_t)
 
 STRUCT(map_t)
 {
-    linked_list_t* buckets;
+    list_t* buckets;
     size_t num_buckets;
 };
 
@@ -32,7 +32,7 @@ map_t create_map(size_t num_buckets)
     if (num_buckets == 0) {
         bail("Does not make sense to create a map with 0 buckets");
     }
-    linked_list_t* buckets = calloc(num_buckets, sizeof(linked_list_t));
+    list_t* buckets = calloc(num_buckets, sizeof(list_t));
     if (buckets == NULL) {
         bail("Failed to allocate buckets");
     }
@@ -59,13 +59,13 @@ bool compare_key(map_bucket_item_t* item, void* key, uint64_t key_hash, size_t k
     return memcmp(item->key, key, item->key_length) == 0;
 }
 
-void find_bucket_item(map_t* map, void* key, size_t key_length, linked_list_t** list_out, map_bucket_item_t** bucket_item_out, uint64_t* key_hash_out)
+void find_bucket_item(map_t* map, void* key, size_t key_length, list_t** list_out, map_bucket_item_t** bucket_item_out, uint64_t* key_hash_out)
 {
     siphash(key, key_length, SIPHASH_KEY, (uint8_t*)(key_hash_out), sizeof(uint64_t));
     size_t bucket_index = (*key_hash_out) % (map->num_buckets);
 
     (*list_out) = map->buckets + bucket_index;
-    linked_list_item_t* last = (*list_out)->last;
+    list_item_t* last = (*list_out)->last;
 
     while (last != NULL) {
         map_bucket_item_t* bucket_item = last->data;
@@ -80,7 +80,7 @@ void find_bucket_item(map_t* map, void* key, size_t key_length, linked_list_t** 
 
 void set_value_for_key(map_t* map, void* key, size_t key_length, void* value)
 {
-    linked_list_t* list;
+    list_t* list;
     map_bucket_item_t* bucket_item;
     uint64_t key_hash;
 
@@ -105,7 +105,7 @@ void set_value_for_string_key(map_t* map, const char* string, void* value)
 
 void* get_value_for_key(map_t* map, void* key, size_t key_length)
 {
-    linked_list_t* list;
+    list_t* list;
     map_bucket_item_t* bucket_item;
     uint64_t key_hash;
 
@@ -124,7 +124,7 @@ void* get_value_for_string_key(map_t* map, const char* string)
 
 void* get_or_set_value_for_key(map_t* map, void* key, size_t key_length, void* value)
 {
-    linked_list_t* list;
+    list_t* list;
     map_bucket_item_t* bucket_item;
     uint64_t key_hash;
 

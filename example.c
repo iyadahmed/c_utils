@@ -12,7 +12,7 @@
 
 static map_t* gmap;
 
-static void print_list_item_data(linked_list_item_t* item)
+static void print_list_item_data(list_item_t* item)
 {
     int* key = item->data;
     int value = get_value_for_key(gmap, key, sizeof(int));
@@ -21,7 +21,7 @@ static void print_list_item_data(linked_list_item_t* item)
 
 int main(int argc, char** argv)
 {
-    linked_list_t list = create_list();
+    list_t list = create_list();
     map_t map = create_map(100);
     gmap = &map;
 
